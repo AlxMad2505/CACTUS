@@ -15,63 +15,86 @@ describe("Inversión y Dividendos (Fase 4)", function () {
   beforeEach(async function () {
     [owner, investor1, investor2] = await ethers.getSigners();
 
-    // Desplegar Ladrillo
     const LadrilloFactory = await ethers.getContractFactory("LadrilloBrick");
     ladrillo = await LadrilloFactory.deploy(
       "Test Ladrillo",
       "TLD",
-      owner.address, // NFT dummy
+      owner.address,
       1,
       INITIAL_SUPPLY,
       owner.address
     );
 
-    // Desplegar FibraManager
     const FibraFactory = await ethers.getContractFactory("FibraManager");
     fibraManager = await FibraFactory.deploy();
 
-    // Distribuir algunos ladrillos a los inversores
-    // 60% al investor1, 40% al investor2
     const decimals = await ladrillo.decimals();
     await ladrillo.transfer(investor1.address, ethers.parseUnits("600", decimals));
     await ladrillo.transfer(investor2.address, ethers.parseUnits("400", decimals));
   });
 
-  it("Debería distribuir dividendos proporcionalmente en LadrilloBrick", async function () {
-    const dividendAmount = ethers.parseEther("10"); // 10 AVAX de renta
+  describe("LadrilloBrick Core", function () {
+    it("Debería distribuir dividendos proporcionalmente", async function () {
+      const dividendAmount = ethers.parseEther("10");
+      const initialBalance1 = await ethers.provider.getBalance(investor1.address);
+      const initialBalance2 = await ethers.provider.getBalance(investor2.address);
 
-    // Guardar balances iniciales
-    const initialBalance1 = await ethers.provider.getBalance(investor1.address);
-    const initialBalance2 = await ethers.provider.getBalance(investor2.address);
+      await ladrillo.release({ value: dividendAmount });
 
-    // Ejecutar distribución (enviando AVAX al contrato)
-    const tx = await ladrillo.release({ value: dividendAmount });
-    await tx.wait();
+      expect(await ethers.provider.getBalance(investor1.address)).to.equal(initialBalance1 + ethers.parseEther("6"));
+      expect(await ethers.provider.getBalance(investor2.address)).to.equal(initialBalance2 + ethers.parseEther("4"));
+    });
 
-    // Verificar balances finales
-    const finalBalance1 = await ethers.provider.getBalance(investor1.address);
-    const finalBalance2 = await ethers.provider.getBalance(investor2.address);
+    it("Debería fallar si el dividendo es cero", async function () {
+      await expect(ladrillo.release({ value: 0 })).to.be.revertedWith("El dividendo debe ser mayor a 0");
+    });
 
-    // Investor 1 debería recibir el 60% (6 AVAX)
-    expect(finalBalance1 - initialBalance1).to.equal(ethers.parseEther("6"));
-    // Investor 2 debería recibir el 40% (4 AVAX)
-    expect(finalBalance2 - initialBalance2).to.equal(ethers.parseEther("4"));
+    it("Debería recibir AVAX directamente y distribuirlo", async function () {
+      const initialBalance1 = await ethers.provider.getBalance(investor1.address);
+      
+      // Simular transferencia directa de AVAX (triggers receive())
+      await owner.sendTransaction({
+        to: await ladrillo.getAddress(),
+        value: ethers.parseEther("1")
+      });
+
+      expect(await ethers.provider.getBalance(investor1.address)).to.equal(initialBalance1 + ethers.parseUnits("0.6", "ether"));
+    });
   });
 
-  it("Debería distribuir dividendos desde FibraManager a múltiples Ladrillos", async function () {
-    // Creamos una FIBRA con el ladrillo existente
-    await fibraManager.createFibra("Fondo Test", [await ladrillo.getAddress()], 100);
-    
-    const fibraDividend = ethers.parseEther("10");
+  describe("FibraManager Core", function () {
+    it("Solo el owner debería crear FIBRAs", async function () {
+      await expect(
+        fibraManager.connect(investor1).createFibra("Hack", [await ladrillo.getAddress()], 100)
+      ).to.be.revertedWithCustomError(fibraManager, "OwnableUnauthorizedAccount");
+    });
 
-    const initialBalance1 = await ethers.provider.getBalance(investor1.address);
-    
-    // Distribuir a través del manager
-    await fibraManager.distributeFibraDividends(0, { value: fibraDividend });
+    it("Debería distribuir dividendos a múltiples ladrillos en una FIBRA", async function () {
+      // Crear un segundo ladrillo
+      const LadrilloFactory = await ethers.getContractFactory("LadrilloBrick");
+      const ladrillo2 = await LadrilloFactory.deploy("Ladrillo 2", "L2", owner.address, 2, 1000, owner.address);
+      
+      // Darle el 100% de ladrillo2 al investor1
+      await ladrillo2.transfer(investor1.address, ethers.parseUnits("1000", 18));
 
-    const finalBalance1 = await ethers.provider.getBalance(investor1.address);
-    
-    // Debería haber recibido su 60% de los 10 AVAX que llegaron al ladrillo
-    expect(finalBalance1 - initialBalance1).to.equal(ethers.parseEther("6"));
+      // Crear FIBRA con ambos
+      await fibraManager.createFibra("Fondo Dual", [await ladrillo.getAddress(), await ladrillo2.getAddress()], 500);
+
+      const initialBalance1 = await ethers.provider.getBalance(investor1.address);
+      
+      // 10 AVAX a la FIBRA -> 5 AVAX a cada ladrillo.
+      // Del ladrillo1 (60%): recibe 3 AVAX.
+      // Del ladrillo2 (100%): recibe 5 AVAX.
+      // Total esperado: 8 AVAX.
+      await fibraManager.distributeFibraDividends(0, { value: ethers.parseEther("10") });
+
+      expect(await ethers.provider.getBalance(investor1.address)).to.equal(initialBalance1 + ethers.parseEther("8"));
+    });
+
+    it("Debería emitir tokens de portafolio al crear la FIBRA", async function () {
+      await fibraManager.createFibra("Portfolio", [await ladrillo.getAddress()], 1000);
+      const balance = await fibraManager.balanceOf(owner.address);
+      expect(ethers.formatEther(balance)).to.equal("1000.0");
+    });
   });
 });

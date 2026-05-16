@@ -2,5 +2,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as interfaces from "./interfaces";
+export { BitacoraInmueble__factory } from "./BitacoraInmueble__factory";
 export { FibraManager__factory } from "./FibraManager__factory";
 export { LadrilloBrick__factory } from "./LadrilloBrick__factory";
