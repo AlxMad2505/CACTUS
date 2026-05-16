@@ -3,5 +3,6 @@
 /* eslint-disable */
 import type * as interfaces from "./interfaces";
 export type { interfaces };
+export type { BitacoraInmueble } from "./BitacoraInmueble";
 export type { FibraManager } from "./FibraManager";
 export type { LadrilloBrick } from "./LadrilloBrick";

@@ -89,7 +89,7 @@ contract BitacoraInmueble is ERC721URIStorage, Ownable, IPropertyStructures {
      */
     function setPropertyLock(uint256 propertyId, bool lockState) external {
         // En producción, aquí validarías que msg.sender sea el contrato PropertyEscrow autorizado
-        if (!_ownerOf(propertyId) == msg.sender && msg.sender != owner()) revert NotAuthorized();
+        if (_ownerOf(propertyId) != msg.sender && msg.sender != owner()) revert NotAuthorized();
         
         properties[propertyId].isLocked = lockState;
         properties[propertyId].status = lockState ? PropertyStatus.EN_ESCROW : PropertyStatus.ACTIVA;
