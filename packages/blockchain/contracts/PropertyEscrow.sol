@@ -57,15 +57,88 @@ contract PropertyEscrow is FunctionsClient, ReentrancyGuard, IPropertyStructures
     mapping(bytes32 => PendingRequest) public pendingRequests;
 
     // --- EVENTOS ---
+    event EscrowStatusChanged(uint256 indexed propertyId, EscrowStatus newStatus);
+    event FundsDeposited(uint256 indexed propertyId, address indexed buyer, uint256 amount);
+    event AuditRequested(bytes32 indexed requestId, uint256 indexed propertyId);
+    event ConditionsVerified(uint256 indexed propertyId, bool isClear);
+    event DealLiquidated(uint256 indexed propertyId, uint256 sellerAmount, uint256 commission);
+    event FundsRefunded(uint256 indexed propertyId, address indexed buyer);
     event AuditFailed(bytes32 indexed requestId, uint256 indexed propertyId, bytes reason);
     event RequestExpired(bytes32 indexed requestId, uint256 indexed propertyId);
     
     // --- ERRORES ---
+    error InvalidStatus(EscrowStatus current, EscrowStatus expected);
+    error Unauthorized();
+    error PropertyAlreadyLocked();
+    error WrongPrice(uint256 sent, uint256 expected);
+    error DeadlineNotReached();
+    error RefundWindowExpired();
+    error ConditionsNotMet();
+    error TransferFailed();
     error RequestNotFound();
     error RequestAlreadyProcessed();
     error RequestNotExpired();
 
-    // ... (constructor y funciones previas iguales)
+    constructor(
+        address _router,
+        address _bitacora,
+        uint64 _subscriptionId,
+        bytes32 _donId,
+        address _marketplaceWallet
+    ) FunctionsClient(_router) {
+        bitacora = IBitacoraInmueble(_bitacora);
+        subscriptionId = _subscriptionId;
+        donId = _donId;
+        marketplaceWallet = _marketplaceWallet;
+    }
+
+    // --- FLUJO DE FUNCIONES PASO A PASO ---
+
+    /**
+     * @notice Funcion 1: Inicia el trato, verifica bloqueos y congela el NFT.
+     */
+    function iniciarContrato(
+        uint256 propertyId, 
+        address buyer, 
+        uint256 price, 
+        uint64 duration
+    ) external {
+        address seller = bitacora.ownerOf(propertyId);
+        if (seller != msg.sender) revert Unauthorized();
+        
+        // Verifica que no este bloqueado ya
+        PropertyRecord memory record = bitacora.properties(propertyId);
+        if (record.isLocked) revert PropertyAlreadyLocked();
+
+        deals[propertyId] = EscrowDeal({
+            buyer: buyer,
+            seller: seller,
+            propertyId: propertyId,
+            price: price,
+            deadline: uint64(block.timestamp + duration),
+            status: EscrowStatus.PENDING
+        });
+
+        // Llamada externa para congelar el activo
+        bitacora.setPropertyLock(propertyId, true);
+        
+        emit EscrowStatusChanged(propertyId, EscrowStatus.PENDING);
+    }
+
+    /**
+     * @notice Funcion 2: Recibe el dinero exacto de la compra del comprador.
+     */
+    function depositarFondos(uint256 propertyId) external payable nonReentrant {
+        EscrowDeal storage deal = deals[propertyId];
+        if (deal.status != EscrowStatus.PENDING) revert InvalidStatus(deal.status, EscrowStatus.PENDING);
+        if (msg.sender != deal.buyer) revert Unauthorized();
+        if (msg.value != deal.price) revert WrongPrice(msg.value, deal.price);
+
+        deal.status = EscrowStatus.FUNDED;
+        
+        emit FundsDeposited(propertyId, msg.sender, msg.value);
+        emit EscrowStatusChanged(propertyId, EscrowStatus.FUNDED);
+    }
 
     /**
      * @notice Funcion 3: Dispara Chainlink Functions para auditoria de adeudos.
@@ -105,12 +178,11 @@ contract PropertyEscrow is FunctionsClient, ReentrancyGuard, IPropertyStructures
         
         request.processed = true;
         uint256 propertyId = request.propertyId;
-        EscrowDeal storage deal = deals[propertyId];
 
         // 2. Si hay error en el oráculo (API caída o error de script JS)
         if (err.length > 0) {
             emit AuditFailed(requestId, propertyId, err);
-            bitacora.externalLogHistory(propertyId, "Error técnico en auditoria Chainlink. Reintento requerido.");
+            bitacora.externalLogHistory(propertyId, "Error tecnico en auditoria Chainlink. Reintento requerido.");
             return;
         }
 

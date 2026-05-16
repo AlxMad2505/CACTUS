@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IPropertyStructures.sol";
+import "./IcmPropertyPortal.sol";
 
 /**
  * @title BitacoraInmueble
@@ -85,22 +86,35 @@ contract BitacoraInmueble is ERC721URIStorage, Ownable, IPropertyStructures {
     // --- INTEGRIDAD Y LOGICA DE CONTROL (Para Bóveda DeFi y Escrow) ---
 
     address public authorizedEscrow;
+    address public propertyPortal; // Nuevo: Portal ICM
 
     function setAuthorizedEscrow(address _escrow) external onlyOwner {
         authorizedEscrow = _escrow;
+    }
+
+    function setPropertyPortal(address _portal) external onlyOwner {
+        propertyPortal = _portal;
     }
 
     /**
      * @notice Bloquea o desbloquea el activo. Llamado por el Escrow para evitar doble venta.
      */
     function setPropertyLock(uint256 propertyId, bool lockState) external {
-        // Validación: Solo el dueño del NFT (para iniciar), el owner del contrato (admin) o el Escrow autorizado
         if (_ownerOf(propertyId) != msg.sender && msg.sender != owner() && msg.sender != authorizedEscrow) {
             revert NotAuthorized();
         }
         
         properties[propertyId].isLocked = lockState;
         properties[propertyId].status = lockState ? PropertyStatus.EN_ESCROW : PropertyStatus.ACTIVA;
+        
+        // Sincronización Cross-Chain automática vía ICM
+        if (propertyPortal != address(0)) {
+            try IcmPropertyPortal(propertyPortal).syncPropertyState(
+                propertyId, 
+                properties[propertyId].currentOwner, 
+                properties[propertyId].status
+            ) {} catch {}
+        }
         
         emit PropertyStatusChanged(propertyId, properties[propertyId].status);
     }

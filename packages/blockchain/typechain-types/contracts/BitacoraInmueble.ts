@@ -42,7 +42,9 @@ export interface BitacoraInmuebleInterface extends Interface {
     nameOrSignature:
       | "approve"
       | "authorizedDevelopers"
+      | "authorizedEscrow"
       | "balanceOf"
+      | "externalLogHistory"
       | "getApproved"
       | "getPropertyHistory"
       | "isApprovedForAll"
@@ -52,13 +54,16 @@ export interface BitacoraInmuebleInterface extends Interface {
       | "ownerOf"
       | "properties"
       | "propertyDebts"
+      | "propertyPortal"
       | "registerMaintenanceEvent"
       | "renounceOwnership"
       | "safeTransferFrom(address,address,uint256)"
       | "safeTransferFrom(address,address,uint256,bytes)"
       | "setApprovalForAll"
+      | "setAuthorizedEscrow"
       | "setDeveloperStatus"
       | "setPropertyLock"
+      | "setPropertyPortal"
       | "supportsInterface"
       | "symbol"
       | "tokenURI"
@@ -90,8 +95,16 @@ export interface BitacoraInmuebleInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "authorizedEscrow",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "balanceOf",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "externalLogHistory",
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "getApproved",
@@ -124,6 +137,10 @@ export interface BitacoraInmuebleInterface extends Interface {
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "propertyPortal",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "registerMaintenanceEvent",
     values: [BigNumberish, string]
   ): string;
@@ -144,12 +161,20 @@ export interface BitacoraInmuebleInterface extends Interface {
     values: [AddressLike, boolean]
   ): string;
   encodeFunctionData(
+    functionFragment: "setAuthorizedEscrow",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setDeveloperStatus",
     values: [AddressLike, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "setPropertyLock",
     values: [BigNumberish, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPropertyPortal",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
@@ -178,7 +203,15 @@ export interface BitacoraInmuebleInterface extends Interface {
     functionFragment: "authorizedDevelopers",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "authorizedEscrow",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "externalLogHistory",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
     data: BytesLike
@@ -204,6 +237,10 @@ export interface BitacoraInmuebleInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "propertyPortal",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "registerMaintenanceEvent",
     data: BytesLike
   ): Result;
@@ -224,11 +261,19 @@ export interface BitacoraInmuebleInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setAuthorizedEscrow",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setDeveloperStatus",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setPropertyLock",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setPropertyPortal",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -487,7 +532,15 @@ export interface BitacoraInmueble extends BaseContract {
     "view"
   >;
 
+  authorizedEscrow: TypedContractMethod<[], [string], "view">;
+
   balanceOf: TypedContractMethod<[owner: AddressLike], [bigint], "view">;
+
+  externalLogHistory: TypedContractMethod<
+    [propertyId: BigNumberish, description: string],
+    [void],
+    "nonpayable"
+  >;
 
   getApproved: TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
 
@@ -549,6 +602,8 @@ export interface BitacoraInmueble extends BaseContract {
     "view"
   >;
 
+  propertyPortal: TypedContractMethod<[], [string], "view">;
+
   registerMaintenanceEvent: TypedContractMethod<
     [propertyId: BigNumberish, description: string],
     [void],
@@ -580,6 +635,12 @@ export interface BitacoraInmueble extends BaseContract {
     "nonpayable"
   >;
 
+  setAuthorizedEscrow: TypedContractMethod<
+    [_escrow: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   setDeveloperStatus: TypedContractMethod<
     [developer: AddressLike, status: boolean],
     [void],
@@ -588,6 +649,12 @@ export interface BitacoraInmueble extends BaseContract {
 
   setPropertyLock: TypedContractMethod<
     [propertyId: BigNumberish, lockState: boolean],
+    [void],
+    "nonpayable"
+  >;
+
+  setPropertyPortal: TypedContractMethod<
+    [_portal: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -640,8 +707,18 @@ export interface BitacoraInmueble extends BaseContract {
     nameOrSignature: "authorizedDevelopers"
   ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
   getFunction(
+    nameOrSignature: "authorizedEscrow"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "balanceOf"
   ): TypedContractMethod<[owner: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "externalLogHistory"
+  ): TypedContractMethod<
+    [propertyId: BigNumberish, description: string],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "getApproved"
   ): TypedContractMethod<[tokenId: BigNumberish], [string], "view">;
@@ -712,6 +789,9 @@ export interface BitacoraInmueble extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "propertyPortal"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "registerMaintenanceEvent"
   ): TypedContractMethod<
     [propertyId: BigNumberish, description: string],
@@ -748,6 +828,9 @@ export interface BitacoraInmueble extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "setAuthorizedEscrow"
+  ): TypedContractMethod<[_escrow: AddressLike], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "setDeveloperStatus"
   ): TypedContractMethod<
     [developer: AddressLike, status: boolean],
@@ -761,6 +844,9 @@ export interface BitacoraInmueble extends BaseContract {
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "setPropertyPortal"
+  ): TypedContractMethod<[_portal: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "supportsInterface"
   ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
