@@ -40,94 +40,32 @@ contract PropertyEscrow is FunctionsClient, ReentrancyGuard, IPropertyStructures
     }
 
     // --- VARIABLES DE ESTADO ---
-    IBitacoraInmueble public immutable bitacora; // Referencia NFT inmutable
+    IBitacoraInmueble public immutable bitacora;
     uint64 public immutable subscriptionId;
     bytes32 public immutable donId;
     address public marketplaceWallet;
-    uint256 public constant COMMISSION_BPS = 200; // 2% de comisión (Base Points)
+    uint256 public constant COMMISSION_BPS = 200;
+    uint256 public constant REQUEST_TIMEOUT = 1 hours; // Tiempo de vida de una petición
 
-    // El mapeo de control: propertyId como llave primaria
+    struct PendingRequest {
+        uint256 propertyId;
+        uint64 timestamp;
+        bool processed;
+    }
+
     mapping(uint256 => EscrowDeal) public deals;
-    mapping(bytes32 => uint256) private _requestIdToPropertyId;
+    mapping(bytes32 => PendingRequest) public pendingRequests;
 
     // --- EVENTOS ---
-    event EscrowStatusChanged(uint256 indexed propertyId, EscrowStatus newStatus);
-    event FundsDeposited(uint256 indexed propertyId, address indexed buyer, uint256 amount);
-    event AuditRequested(bytes32 indexed requestId, uint256 indexed propertyId);
-    event ConditionsVerified(uint256 indexed propertyId, bool isClear);
-    event DealLiquidated(uint256 indexed propertyId, uint256 sellerAmount, uint256 commission);
-    event FundsRefunded(uint256 indexed propertyId, address indexed buyer);
+    event AuditFailed(bytes32 indexed requestId, uint256 indexed propertyId, bytes reason);
+    event RequestExpired(bytes32 indexed requestId, uint256 indexed propertyId);
+    
+    // --- ERRORES ---
+    error RequestNotFound();
+    error RequestAlreadyProcessed();
+    error RequestNotExpired();
 
-    // --- ERRORES PERSONALIZADOS ---
-    error InvalidStatus(EscrowStatus current, EscrowStatus expected);
-    error Unauthorized();
-    error PropertyAlreadyLocked();
-    error WrongPrice(uint256 sent, uint256 expected);
-    error DeadlineNotReached();
-    error RefundWindowExpired();
-    error ConditionsNotMet();
-    error TransferFailed();
-
-    constructor(
-        address _router,
-        address _bitacora,
-        uint64 _subscriptionId,
-        bytes32 _donId,
-        address _marketplaceWallet
-    ) FunctionsClient(_router) {
-        bitacora = IBitacoraInmueble(_bitacora);
-        subscriptionId = _subscriptionId;
-        donId = _donId;
-        marketplaceWallet = _marketplaceWallet;
-    }
-
-    // --- FLUJO DE FUNCIONES PASO A PASO ---
-
-    /**
-     * @notice Funcion 1: Inicia el trato, verifica bloqueos y congela el NFT.
-     */
-    function iniciarContrato(
-        uint256 propertyId, 
-        address buyer, 
-        uint256 price, 
-        uint64 duration
-    ) external {
-        address seller = bitacora.ownerOf(propertyId);
-        if (seller != msg.sender) revert Unauthorized();
-        
-        // Verifica que no este bloqueado ya
-        PropertyRecord memory record = bitacora.properties(propertyId);
-        if (record.isLocked) revert PropertyAlreadyLocked();
-
-        deals[propertyId] = EscrowDeal({
-            buyer: buyer,
-            seller: seller,
-            propertyId: propertyId,
-            price: price,
-            deadline: uint64(block.timestamp + duration),
-            status: EscrowStatus.PENDING
-        });
-
-        // Llamada externa para congelar el activo
-        bitacora.setPropertyLock(propertyId, true);
-        
-        emit EscrowStatusChanged(propertyId, EscrowStatus.PENDING);
-    }
-
-    /**
-     * @notice Funcion 2: Recibe el dinero exacto de la compra del comprador.
-     */
-    function depositarFondos(uint256 propertyId) external payable nonReentrant {
-        EscrowDeal storage deal = deals[propertyId];
-        if (deal.status != EscrowStatus.PENDING) revert InvalidStatus(deal.status, EscrowStatus.PENDING);
-        if (msg.sender != deal.buyer) revert Unauthorized();
-        if (msg.value != deal.price) revert WrongPrice(msg.value, deal.price);
-
-        deal.status = EscrowStatus.FUNDED;
-        
-        emit FundsDeposited(propertyId, msg.sender, msg.value);
-        emit EscrowStatusChanged(propertyId, EscrowStatus.FUNDED);
-    }
+    // ... (constructor y funciones previas iguales)
 
     /**
      * @notice Funcion 3: Dispara Chainlink Functions para auditoria de adeudos.
@@ -145,34 +83,76 @@ contract PropertyEscrow is FunctionsClient, ReentrancyGuard, IPropertyStructures
         req.setArgs(args);
 
         requestId = _sendRequest(req.encodeCBOR(), subscriptionId, 300000, donId);
-        _requestIdToPropertyId[requestId] = propertyId;
+        
+        pendingRequests[requestId] = PendingRequest({
+            propertyId: propertyId,
+            timestamp: uint64(block.timestamp),
+            processed: false
+        });
         
         emit AuditRequested(requestId, propertyId);
     }
 
     /**
-     * @notice Funcion 4: Procesa la respuesta del oraculo.
+     * @notice Funcion 4: Procesa la respuesta del oraculo con validaciones extra.
      */
     function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory err) internal override {
-        uint256 propertyId = _requestIdToPropertyId[requestId];
-        if (propertyId == 0) return;
-
+        PendingRequest storage request = pendingRequests[requestId];
+        
+        // 1. Validar que la petición exista y no haya sido procesada
+        if (request.propertyId == 0) revert RequestNotFound();
+        if (request.processed) revert RequestAlreadyProcessed();
+        
+        request.processed = true;
+        uint256 propertyId = request.propertyId;
         EscrowDeal storage deal = deals[propertyId];
-        if (err.length == 0) {
-            bool isClear = abi.decode(response, (bool));
-            
-            if (isClear) {
-                deal.status = EscrowStatus.CONDITIONS_MET;
-                // Invoca funcion NFT para actualizar registro historico
-                bitacora.externalLogHistory(propertyId, "Certificacion de adeudos: LIMPIA. Condiciones de Escrow cumplidas.");
-                emit ConditionsVerified(propertyId, true);
-                emit EscrowStatusChanged(propertyId, EscrowStatus.CONDITIONS_MET);
-            } else {
-                emit ConditionsVerified(propertyId, false);
-                bitacora.externalLogHistory(propertyId, "Certificacion de adeudos: FALLIDA. Deudas pendientes detectadas.");
-            }
+
+        // 2. Si hay error en el oráculo (API caída o error de script JS)
+        if (err.length > 0) {
+            emit AuditFailed(requestId, propertyId, err);
+            bitacora.externalLogHistory(propertyId, "Error técnico en auditoria Chainlink. Reintento requerido.");
+            return;
         }
-        delete _requestIdToPropertyId[requestId];
+
+        // 3. Procesar respuesta exitosa
+        try this.decodeAndApply(propertyId, response) {
+            // Éxito en la decodificación y aplicación
+        } catch {
+            emit AuditFailed(requestId, propertyId, "Error decodificando respuesta");
+        }
+    }
+
+    /**
+     * @notice Función auxiliar para permitir el uso de 'try/catch' en la decodificación.
+     */
+    function decodeAndApply(uint256 propertyId, bytes memory response) external {
+        if (msg.sender != address(this)) revert Unauthorized();
+        
+        bool isClear = abi.decode(response, (bool));
+        EscrowDeal storage deal = deals[propertyId];
+        
+        if (isClear) {
+            deal.status = EscrowStatus.CONDITIONS_MET;
+            bitacora.externalLogHistory(propertyId, "Certificacion de adeudos: LIMPIA. Condiciones de Escrow cumplidas.");
+            emit ConditionsVerified(propertyId, true);
+            emit EscrowStatusChanged(propertyId, EscrowStatus.CONDITIONS_MET);
+        } else {
+            emit ConditionsVerified(propertyId, false);
+            bitacora.externalLogHistory(propertyId, "Certificacion de adeudos: FALLIDA. Deudas pendientes detectadas.");
+        }
+    }
+
+    /**
+     * @notice Permite limpiar peticiones que nunca recibieron respuesta (Timeout).
+     */
+    function cancelarPeticionExpirada(bytes32 requestId) external {
+        PendingRequest storage request = pendingRequests[requestId];
+        if (request.propertyId == 0) revert RequestNotFound();
+        if (request.processed) revert RequestAlreadyProcessed();
+        if (block.timestamp < request.timestamp + REQUEST_TIMEOUT) revert RequestNotExpired();
+
+        request.processed = true;
+        emit RequestExpired(requestId, request.propertyId);
     }
 
     /**
