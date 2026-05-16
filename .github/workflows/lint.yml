@@ -1,0 +1,25 @@
+name: Solidity Linting
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  run-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-index: '20'
+
+      - name: Install Solhint
+        run: npm install -g solhint
+
+      - name: Run Linter
+        run: solhint 'packages/blockchain/contracts/**/*.sol'
