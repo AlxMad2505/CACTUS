@@ -107,7 +107,7 @@ export default function HomePage() {
             </span>
             <h1 className="mt-4 text-balance text-4xl font-bold leading-tight tracking-tight text-foreground lg:text-5xl xl:text-6xl">
               El futuro inmobiliario es{" "}
-              <span className="text-avax-red">inmutable</span>, fraccional y sin
+              <span className="text-avax-red">inmutable, fraccional</span> y sin
               intermediarios.
             </h1>
             <p className="mt-6 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground lg:text-lg">
