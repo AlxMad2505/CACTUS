@@ -84,17 +84,33 @@ contract BitacoraInmueble is ERC721URIStorage, Ownable, IPropertyStructures {
 
     // --- INTEGRIDAD Y LOGICA DE CONTROL (Para Bóveda DeFi y Escrow) ---
 
+    address public authorizedEscrow;
+
+    function setAuthorizedEscrow(address _escrow) external onlyOwner {
+        authorizedEscrow = _escrow;
+    }
+
     /**
      * @notice Bloquea o desbloquea el activo. Llamado por el Escrow para evitar doble venta.
      */
     function setPropertyLock(uint256 propertyId, bool lockState) external {
-        // En producción, aquí validarías que msg.sender sea el contrato PropertyEscrow autorizado
-        if (_ownerOf(propertyId) != msg.sender && msg.sender != owner()) revert NotAuthorized();
+        // Validación: Solo el dueño del NFT (para iniciar), el owner del contrato (admin) o el Escrow autorizado
+        if (_ownerOf(propertyId) != msg.sender && msg.sender != owner() && msg.sender != authorizedEscrow) {
+            revert NotAuthorized();
+        }
         
         properties[propertyId].isLocked = lockState;
         properties[propertyId].status = lockState ? PropertyStatus.EN_ESCROW : PropertyStatus.ACTIVA;
         
         emit PropertyStatusChanged(propertyId, properties[propertyId].status);
+    }
+
+    /**
+     * @notice Permite al Escrow registrar eventos en la bitácora histórica.
+     */
+    function externalLogHistory(uint256 propertyId, string calldata description) external {
+        if (msg.sender != authorizedEscrow) revert NotAuthorized();
+        _logHistory(propertyId, msg.sender, description);
     }
 
     // --- TERCER SEGMENTO: TRANSPARENCIA DE ADEUDOS (Chainlink / Oráculos) ---
