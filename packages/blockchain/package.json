@@ -3,17 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "hardhat compile",
+    "test": "hardhat test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2"
+  },
   "devDependencies": {
-    "hardhat": "^3.4.5"
+    "@nomicfoundation/hardhat-ignition": "^0.15.16",
+    "@nomicfoundation/ignition-core": "^0.15.15"
   }
 }
