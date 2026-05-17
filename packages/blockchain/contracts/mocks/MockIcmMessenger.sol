@@ -1,32 +1,53 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "../interfaces/IIcmMessenger.sol";
+import "./interfaces/IIcmMessenger.sol";
 
 /**
  * @title MockIcmMessenger
- * @notice Simula el contrato pre-compilado de Avalanche ICM para pruebas locales.
+ * @notice Contrato simulador para emular Avalanche Interchain Messaging (ICM) en Remix
  */
 contract MockIcmMessenger is IIcmMessenger {
-    uint256 private _nonce;
+    uint256 private _nonceCounter;
 
-    event MockMessageSent(bytes32 destinationChainId, address destinationAddress, bytes payload);
+    constructor() {
+        _nonceCounter = 1;
+    }
 
+    /**
+     * @notice Simula el envío de un mensaje cross-chain incrementando el nonce
+     */
     function sendInterchainMessage(
         bytes32 destinationBlockchainID,
         address destinationAddress,
         bytes calldata message
-    ) external override returns (uint256) {
-        uint256 currentNonce = _nonce++;
-        emit MockMessageSent(destinationBlockchainID, destinationAddress, message);
-        return currentNonce;
+    ) external override returns (uint256 messageNonce) {
+        messageNonce = _nextTokenNonce();
+        
+        emit InterchainMessageSent(
+            destinationBlockchainID,
+            destinationAddress,
+            messageNonce,
+            message
+        );
     }
 
+    /**
+     * @notice Simula la recepción de un mensaje
+     */
     function receiveInterchainMessage(
         bytes32 sourceBlockchainID,
         address sourceAddress,
         bytes calldata message
     ) external override {
-        // Mock no hace nada en recepción por ahora
+        emit InterchainMessageReceived(
+            sourceBlockchainID,
+            sourceAddress,
+            message
+        );
+    }
+
+    function _nextTokenNonce() internal returns (uint256) {
+        return _nonceCounter++;
     }
 }
