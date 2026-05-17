@@ -10,16 +10,11 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Propiedad Digital - Ecosistema Inmobiliario Blockchain",
+  title: "CACTUS - Inversiones Digitales Inmobiliarias",
   description:
     "Plataforma de tokenizacion inmobiliaria sobre Avalanche. Bitacoras inmutables, escrows inteligentes y crowdfunding fraccional.",
-  generator: "v0.app",
   icons: {
-    icon: [
-      { url: "/icon-light-32x32.png", media: "(prefers-color-scheme: light)" },
-      { url: "/icon-dark-32x32.png", media: "(prefers-color-scheme: dark)" },
-      { url: "/icon.svg", type: "image/svg+xml" },
-    ],
+    icon: "/cactus-ico.jpg",
     apple: "/apple-icon.png",
   },
 };

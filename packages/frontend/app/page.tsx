@@ -103,7 +103,7 @@ export default function HomePage() {
             className="flex-1 text-center lg:text-left"
           >
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-avax-red/30 bg-avax-red/10 px-4 py-1.5 text-xs font-semibold text-avax-red">
-              <Zap className="h-3 w-3" /> Avalanche L1 Subnet
+              <Zap className="h-3 w-3" /> Avalanche L1
             </span>
             <h1 className="mt-4 text-balance text-4xl font-bold leading-tight tracking-tight text-foreground lg:text-5xl xl:text-6xl">
               El futuro inmobiliario es{" "}

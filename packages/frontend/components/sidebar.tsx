@@ -49,7 +49,7 @@ export function Sidebar() {
           {!collapsed && (
             <div className="flex flex-col overflow-hidden">
               <span className="text-sm font-semibold text-sidebar-foreground">
-                Propiedad Digital
+                CACTUS
               </span>
               <span className="inline-flex items-center gap-1 text-[10px] font-medium text-avax-red">
                 <Wifi className="h-2.5 w-2.5" />

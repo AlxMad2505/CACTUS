@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Github, Linkedin, Twitter } from "lucide-react";
+import { Github, Linkedin, Instagram } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -16,9 +16,14 @@ const founders = [
   {
     name: "Miguel Angel Correa Martínez",
     role: "Full-Stack Engineer & Blockchain Developer (Backend & Data Models)",
-    bio: "Ingeniero en Computación de la UNAM con experiencia en arquitectura de software, desarrollo web y soluciones blockchain. Apasionado por la Web3 y la tokenización de activos.",
+    bio: "Ingeniero en Computación de la UNAM con experiencia en arquitectura de software y desarrollo web. Apasionado por IA, Web3 y la tokenización de activos. Visualiza un futuro donde las propiedades estén ligadas de manera digital a sus dueños quitando la burocracia innecesaria actual.",
     initials: "MAC",
     image: "/images/mikeDevPFP.png",
+    socials: {
+      github: "https://github.com/MikeDev000",
+      linkedin: "https://www.linkedin.com/in/miguel-angel-correa-martinez",
+      instagram: "https://www.instagram.com/mikeoff000/",
+    },
   },
   {
     name: "Alejandro Madrigal Urencio",
@@ -26,6 +31,11 @@ const founders = [
     bio: "Ingeniero en Computación de la UNAM apasionado por el desarrollo de interfaces digitales con enfoque en la experiencia de usuario y el desarrollo de software. Especialista en transformar conceptos en experiencias interactivas e intuitivas.",
     initials: "AMU",
     image: "/images/alexDevPFP.png",
+    socials: {
+      github: "https://github.com/AlxMad2505",
+      linkedin: "https://www.linkedin.com/in/alejandro-madrigal-07b523408/",
+      instagram: "https://www.instagram.com/alex_el_loco25/",
+    },
   },
 ];
 
@@ -102,17 +112,17 @@ export default function NosotrosPage() {
                 {/* Avatar Coin Flip */}
                 <div className="mx-auto mb-6 h-28 w-28" style={{ perspective: '1000px' }}>
                   <div className="relative h-full w-full transition-transform duration-700 group-hover:[transform:rotateY(180deg)]" style={{ transformStyle: 'preserve-3d' }}>
-                    {/* Front face (Image) */}
-                    <div className="absolute inset-0 rounded-full ring-4 ring-avax-red/20 overflow-hidden" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
-                      <img 
-                        src={f.image} 
-                        alt={f.name} 
+                    {/* Front face (Initials) */}
+                    <div className="absolute inset-0 rounded-full flex items-center justify-center bg-gradient-to-br from-avax-red/20 via-avax-red/5 to-primary/10 ring-4 ring-avax-red/20" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
+                      <span className="text-2xl font-bold text-avax-red">{f.initials}</span>
+                    </div>
+                    {/* Back face (Image) */}
+                    <div className="absolute inset-0 rounded-full ring-4 ring-avax-red/40 overflow-hidden [transform:rotateY(180deg)]" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
+                      <img
+                        src={f.image}
+                        alt={f.name}
                         className="h-full w-full object-cover"
                       />
-                    </div>
-                    {/* Back face (Initials) */}
-                    <div className="absolute inset-0 rounded-full flex items-center justify-center bg-gradient-to-br from-avax-red/20 via-avax-red/5 to-primary/10 ring-4 ring-avax-red/40 [transform:rotateY(180deg)]" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
-                      <span className="text-2xl font-bold text-avax-red">{f.initials}</span>
                     </div>
                   </div>
                 </div>
@@ -125,14 +135,30 @@ export default function NosotrosPage() {
 
                 {/* Social icons */}
                 <div className="mt-6 flex items-center justify-center gap-3">
-                  {[Github, Linkedin, Twitter].map((Icon, idx) => (
-                    <button
-                      key={idx}
-                      className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary text-muted-foreground transition-colors hover:bg-avax-red/10 hover:text-avax-red"
-                    >
-                      <Icon className="h-4 w-4" />
-                    </button>
-                  ))}
+                  <a
+                    href={f.socials.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary text-muted-foreground transition-colors hover:bg-avax-red/10 hover:text-avax-red"
+                  >
+                    <Github className="h-4 w-4" />
+                  </a>
+                  <a
+                    href={f.socials.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary text-muted-foreground transition-colors hover:bg-avax-red/10 hover:text-avax-red"
+                  >
+                    <Linkedin className="h-4 w-4" />
+                  </a>
+                  <a
+                    href={f.socials.instagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-secondary text-muted-foreground transition-colors hover:bg-avax-red/10 hover:text-avax-red"
+                  >
+                    <Instagram className="h-4 w-4" />
+                  </a>
                 </div>
               </motion.div>
             ))}

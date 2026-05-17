@@ -1,1 +1,9 @@
-node_modules
+node_modules/
+.next/
+artifacts/
+cache/
+typechain-types/
+dist/
+.env*
+.DS_Store
+package-lock.json
