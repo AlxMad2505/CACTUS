@@ -174,19 +174,6 @@ export const mockFibras: FibraPortfolio[] = [
   },
 ];
 
-export const mockWallet: WalletState = {
-  connected: false,
-  address: "0x7a3b9E...4F2e",
-  balanceAVAX: 24.738,
-  balanceLadrillos: 1250,
-  fibraParticipations: 3,
-  recentTx: [
-    { id: "tx-1", type: "ICM Message", description: "ICM Message Received", amount: "0.00 AVAX", timestamp: "hace 2 min" },
-    { id: "tx-2", type: "Escrow", description: "Escrow Funded", amount: "245 AVAX", timestamp: "hace 15 min" },
-    { id: "tx-3", type: "Dividendo", description: "Dividendo FIBRA Recibido", amount: "1.25 AVAX", timestamp: "hace 1 hora" },
-  ],
-};
-
 export const mockNotifications: Notification[] = [
   { id: "n-1", message: "Tokenizacion exitosa - Prop #4726", type: "success", timestamp: "hace 5 min" },
   { id: "n-2", message: "Dividendo recibido: 1.25 AVAX", type: "info", timestamp: "hace 1 hora" },

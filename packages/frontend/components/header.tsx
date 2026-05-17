@@ -127,9 +127,11 @@ export function Header() {
                 <span className="absolute -bottom-0 -right-0 h-2 w-2 rounded-full border border-secondary bg-success" />
               </div>
               <div className="flex flex-col items-start">
-                {/* Imprime la dirección real calculada por el context */}
-                <span className="text-xs font-medium text-foreground">{wallet.address}</span>
-                <span className="text-[10px] text-success">Online en Fuji C-Chain</span>
+                {/* Imprime la dirección real recortada para mejor UI */}
+                <span className="text-xs font-medium text-foreground">
+                  {wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}
+                </span>
+                <span className="text-[10px] text-success">Online en {wallet.network}</span>
               </div>
               <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
@@ -144,8 +146,11 @@ export function Header() {
                   Balance Principal
                 </p>
                 <p className="mt-1 text-2xl font-bold text-card-foreground">
-                  {/* Lee el balance formateado en Ether/AVAX */}
-                  {wallet.balanceAVAX}{" "}
+                  {/* Lee el balance formateado en Ether/AVAX con decimales */}
+                  {wallet.balanceAVAX.toLocaleString(undefined, { 
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: 4 
+                  })}{" "}
                   <span className="text-sm font-medium text-avax-red">AVAX</span>
                 </p>
               </div>
