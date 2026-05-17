@@ -14,6 +14,22 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "FunctionsClient",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FunctionsClient__factory>;
+    getContractFactory(
+      name: "IFunctionsClient",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IFunctionsClient__factory>;
+    getContractFactory(
+      name: "IFunctionsRouter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IFunctionsRouter__factory>;
+    getContractFactory(
+      name: "FunctionsRequest",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FunctionsRequest__factory>;
+    getContractFactory(
       name: "Ownable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Ownable__factory>;
@@ -94,6 +110,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FibraManager__factory>;
     getContractFactory(
+      name: "IcmPropertyPortal",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IcmPropertyPortal__factory>;
+    getContractFactory(
+      name: "IcmReceiverFuji",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IcmReceiverFuji__factory>;
+    getContractFactory(
       name: "IIcmMessenger",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IIcmMessenger__factory>;
@@ -101,7 +125,43 @@ declare module "hardhat/types/runtime" {
       name: "LadrilloBrick",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.LadrilloBrick__factory>;
+    getContractFactory(
+      name: "MockFunctionsRouter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockFunctionsRouter__factory>;
+    getContractFactory(
+      name: "MockIcmMessenger",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockIcmMessenger__factory>;
+    getContractFactory(
+      name: "IBitacoraInmueble",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IBitacoraInmueble__factory>;
+    getContractFactory(
+      name: "PropertyEscrow",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PropertyEscrow__factory>;
 
+    getContractAt(
+      name: "FunctionsClient",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FunctionsClient>;
+    getContractAt(
+      name: "IFunctionsClient",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IFunctionsClient>;
+    getContractAt(
+      name: "IFunctionsRouter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IFunctionsRouter>;
+    getContractAt(
+      name: "FunctionsRequest",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FunctionsRequest>;
     getContractAt(
       name: "Ownable",
       address: string | ethers.Addressable,
@@ -203,6 +263,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.FibraManager>;
     getContractAt(
+      name: "IcmPropertyPortal",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IcmPropertyPortal>;
+    getContractAt(
+      name: "IcmReceiverFuji",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IcmReceiverFuji>;
+    getContractAt(
       name: "IIcmMessenger",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -212,7 +282,43 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.LadrilloBrick>;
+    getContractAt(
+      name: "MockFunctionsRouter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockFunctionsRouter>;
+    getContractAt(
+      name: "MockIcmMessenger",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockIcmMessenger>;
+    getContractAt(
+      name: "IBitacoraInmueble",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IBitacoraInmueble>;
+    getContractAt(
+      name: "PropertyEscrow",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PropertyEscrow>;
 
+    deployContract(
+      name: "FunctionsClient",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FunctionsClient>;
+    deployContract(
+      name: "IFunctionsClient",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IFunctionsClient>;
+    deployContract(
+      name: "IFunctionsRouter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IFunctionsRouter>;
+    deployContract(
+      name: "FunctionsRequest",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FunctionsRequest>;
     deployContract(
       name: "Ownable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -294,6 +400,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FibraManager>;
     deployContract(
+      name: "IcmPropertyPortal",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IcmPropertyPortal>;
+    deployContract(
+      name: "IcmReceiverFuji",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IcmReceiverFuji>;
+    deployContract(
       name: "IIcmMessenger",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IIcmMessenger>;
@@ -301,7 +415,43 @@ declare module "hardhat/types/runtime" {
       name: "LadrilloBrick",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.LadrilloBrick>;
+    deployContract(
+      name: "MockFunctionsRouter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockFunctionsRouter>;
+    deployContract(
+      name: "MockIcmMessenger",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockIcmMessenger>;
+    deployContract(
+      name: "IBitacoraInmueble",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IBitacoraInmueble>;
+    deployContract(
+      name: "PropertyEscrow",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.PropertyEscrow>;
 
+    deployContract(
+      name: "FunctionsClient",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FunctionsClient>;
+    deployContract(
+      name: "IFunctionsClient",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IFunctionsClient>;
+    deployContract(
+      name: "IFunctionsRouter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IFunctionsRouter>;
+    deployContract(
+      name: "FunctionsRequest",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FunctionsRequest>;
     deployContract(
       name: "Ownable",
       args: any[],
@@ -403,6 +553,16 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FibraManager>;
     deployContract(
+      name: "IcmPropertyPortal",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IcmPropertyPortal>;
+    deployContract(
+      name: "IcmReceiverFuji",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IcmReceiverFuji>;
+    deployContract(
       name: "IIcmMessenger",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -412,6 +572,26 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.LadrilloBrick>;
+    deployContract(
+      name: "MockFunctionsRouter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockFunctionsRouter>;
+    deployContract(
+      name: "MockIcmMessenger",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockIcmMessenger>;
+    deployContract(
+      name: "IBitacoraInmueble",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IBitacoraInmueble>;
+    deployContract(
+      name: "PropertyEscrow",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.PropertyEscrow>;
 
     // default types
     getContractFactory(

@@ -1,0 +1,144 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "MockIcmMessenger",
+  "sourceName": "contracts/mocks/MockIcmMessenger.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "sourceBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sourceAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "message",
+          "type": "bytes"
+        }
+      ],
+      "name": "InterchainMessageReceived",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "destinationBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "destinationAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "nonce",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "message",
+          "type": "bytes"
+        }
+      ],
+      "name": "InterchainMessageSent",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "destinationChainId",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "destinationAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "payload",
+          "type": "bytes"
+        }
+      ],
+      "name": "MockMessageSent",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "sourceBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "sourceAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "message",
+          "type": "bytes"
+        }
+      ],
+      "name": "receiveInterchainMessage",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "destinationBlockchainID",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "destinationAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "message",
+          "type": "bytes"
+        }
+      ],
+      "name": "sendInterchainMessage",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608060405234801561000f575f80fd5b506101fc8061001d5f395ff3fe608060405234801561000f575f80fd5b5060043610610034575f3560e01c806315b5f9c4146100385780639787e0211461005d575b5f80fd5b61004b6100463660046100cf565b610073565b60405190815260200160405180910390f35b61007161006b3660046100cf565b50505050565b005b5f8054819081806100838361015c565b9190505590507f83a7419c42cee3c7c3c01a27279518d9e306585536da89c020098e20a1ffd288868686866040516100be9493929190610180565b60405180910390a195945050505050565b5f805f80606085870312156100e2575f80fd5b8435935060208501356001600160a01b03811681146100ff575f80fd5b9250604085013567ffffffffffffffff8082111561011b575f80fd5b818701915087601f83011261012e575f80fd5b81358181111561013c575f80fd5b88602082850101111561014d575f80fd5b95989497505060200194505050565b5f6001820161017957634e487b7160e01b5f52601160045260245ffd5b5060010190565b8481526001600160a01b03841660208201526060604082018190528101829052818360808301375f818301608090810191909152601f909201601f19160101939250505056fea264697066735822122092513e5389db6f5a5e2f72ea51e6625ec1d9a0438e2d46f0b7d892eda7ae4fdf64736f6c63430008180033",
+  "deployedBytecode": "0x608060405234801561000f575f80fd5b5060043610610034575f3560e01c806315b5f9c4146100385780639787e0211461005d575b5f80fd5b61004b6100463660046100cf565b610073565b60405190815260200160405180910390f35b61007161006b3660046100cf565b50505050565b005b5f8054819081806100838361015c565b9190505590507f83a7419c42cee3c7c3c01a27279518d9e306585536da89c020098e20a1ffd288868686866040516100be9493929190610180565b60405180910390a195945050505050565b5f805f80606085870312156100e2575f80fd5b8435935060208501356001600160a01b03811681146100ff575f80fd5b9250604085013567ffffffffffffffff8082111561011b575f80fd5b818701915087601f83011261012e575f80fd5b81358181111561013c575f80fd5b88602082850101111561014d575f80fd5b95989497505060200194505050565b5f6001820161017957634e487b7160e01b5f52601160045260245ffd5b5060010190565b8481526001600160a01b03841660208201526060604082018190528101829052818360808301375f818301608090810191909152601f909201601f19160101939250505056fea264697066735822122092513e5389db6f5a5e2f72ea51e6625ec1d9a0438e2d46f0b7d892eda7ae4fdf64736f6c63430008180033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
