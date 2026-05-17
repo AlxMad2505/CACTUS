@@ -80,16 +80,37 @@ contract PropertyEscrow is FunctionsClient, ReentrancyGuard, IPropertyStructures
     error RequestNotExpired();
 
     constructor(
-        address _router,
+        string memory _routerStr, // Cambiamos a string para evitar el bloqueo de Remix
         address _bitacora,
         uint64 _subscriptionId,
         bytes32 _donId,
         address _marketplaceWallet
-    ) FunctionsClient(_router) {
+    ) FunctionsClient(parseAddress(_routerStr)) { // Convertimos el string a address sobre la marcha
         bitacora = IBitacoraInmueble(_bitacora);
         subscriptionId = _subscriptionId;
         donId = _donId;
         marketplaceWallet = _marketplaceWallet;
+    }
+
+    // Función auxiliar interna para procesar el string sin importar mayúsculas/minúsculas
+    function parseAddress(string memory _a) internal pure returns (address _parsedAddress) {
+        bytes memory tmp = bytes(_a);
+        uint160 iaddr = 0;
+        uint160 b1;
+        uint160 b2;
+        for (uint256 i = 2; i < tmp.length; i += 2) {
+            iaddr *= 256;
+            b1 = uint160(uint8(tmp[i]));
+            b2 = uint160(uint8(tmp[i + 1]));
+            if ((b1 >= 97) && (b1 <= 102)) b1 -= 87;
+            else if ((b1 >= 65) && (b1 <= 70)) b1 -= 55;
+            else if ((b1 >= 48) && (b1 <= 57)) b1 -= 48;
+            if ((b2 >= 97) && (b2 <= 102)) b2 -= 87;
+            else if ((b2 >= 65) && (b2 <= 70)) b2 -= 55;
+            else if ((b2 >= 48) && (b2 <= 57)) b2 -= 48;
+            iaddr += (b1 * 16 + b2);
+        }
+        return address(iaddr);
     }
 
     // --- FLUJO DE FUNCIONES PASO A PASO ---
