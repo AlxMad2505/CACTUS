@@ -14,16 +14,18 @@ const fadeUp = {
 
 const founders = [
   {
-    name: "Nombre del Co-Fundador 1",
-    role: "Core Blockchain Architect",
-    bio: "Especialista en desarrollo de subnets Avalanche, contratos inteligentes y arquitectura de protocolos DeFi inmobiliarios.",
-    initials: "CF1",
+    name: "Miguel Angel Correa Martínez",
+    role: "Full-Stack Engineer & Blockchain Developer (Backend & Data Models)",
+    bio: "Ingeniero en Computación de la UNAM con experiencia en arquitectura de software, desarrollo web y soluciones blockchain. Apasionado por la Web3 y la tokenización de activos.",
+    initials: "MAC",
+    image: "/images/mikeDevPFP.png",
   },
   {
-    name: "Nombre del Co-Fundador 2",
-    role: "Lead Full-Stack UI Engineer",
-    bio: "Experto en interfaces Web3 de alta fidelidad, integracion de wallets y experiencias de usuario para plataformas financieras descentralizadas.",
-    initials: "CF2",
+    name: "Alejandro Madrigal Urencio",
+    role: "Full-Stack Engineer & Blockchain Developer (Backend & Frontend UI/UX)",
+    bio: "Ingeniero en Computación de la UNAM apasionado por el desarrollo de interfaces digitales con enfoque en la experiencia de usuario y el desarrollo de software. Especialista en transformar conceptos en experiencias interactivas e intuitivas.",
+    initials: "AMU",
+    image: "/images/alexDevPFP.png",
   },
 ];
 
@@ -67,7 +69,7 @@ export default function NosotrosPage() {
               <h2 className="mb-4 mt-8 text-lg font-semibold text-avax-red">Vision</h2>
               <p className="text-sm leading-relaxed text-muted-foreground">
                 Convertirnos en el ecosistema de referencia para la tokenizacion y
-                fraccionamiento inmobiliario en Latinoamerica, donde cada persona pueda ser
+                fraccionamiento inmobiliario en Latinoamerica; así como poder crear un histórico de cada inmueble existente en el mundo, avalando oficialmente la pertenencia de las propiedades con sus dueños sin necesidad de depender de un "papel". Un mundo donde cualquier persona con conexión a internet pueda ser
                 copropietaria de activos de alta calidad sin importar su capital inicial,
                 respaldado por la seguridad e inmutabilidad de una L1 dedicada.
               </p>
@@ -97,9 +99,22 @@ export default function NosotrosPage() {
                 custom={i + 1}
                 className="group w-full max-w-sm overflow-hidden rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:border-avax-red/30 hover:shadow-lg hover:shadow-avax-red/5"
               >
-                {/* Avatar placeholder */}
-                <div className="mx-auto mb-6 flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-avax-red/20 via-avax-red/5 to-primary/10 ring-4 ring-avax-red/20 transition-all group-hover:ring-avax-red/40">
-                  <span className="text-2xl font-bold text-avax-red">{f.initials}</span>
+                {/* Avatar Coin Flip */}
+                <div className="mx-auto mb-6 h-28 w-28" style={{ perspective: '1000px' }}>
+                  <div className="relative h-full w-full transition-transform duration-700 group-hover:[transform:rotateY(180deg)]" style={{ transformStyle: 'preserve-3d' }}>
+                    {/* Front face (Image) */}
+                    <div className="absolute inset-0 rounded-full ring-4 ring-avax-red/20 overflow-hidden" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
+                      <img 
+                        src={f.image} 
+                        alt={f.name} 
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    {/* Back face (Initials) */}
+                    <div className="absolute inset-0 rounded-full flex items-center justify-center bg-gradient-to-br from-avax-red/20 via-avax-red/5 to-primary/10 ring-4 ring-avax-red/40 [transform:rotateY(180deg)]" style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
+                      <span className="text-2xl font-bold text-avax-red">{f.initials}</span>
+                    </div>
+                  </div>
                 </div>
 
                 <h3 className="text-lg font-semibold text-card-foreground">{f.name}</h3>

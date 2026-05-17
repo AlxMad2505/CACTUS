@@ -24,6 +24,16 @@ export function Header() {
   const [walletOpen, setWalletOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
 
+  // Función auxiliar para copiar la dirección al portapapeles
+  const copiarDireccion = () => {
+    if (wallet.address) {
+      // Si la dirección del context está recortada (ej: 0x123...abcd), 
+      // idealmente en producción copiarías una variable con la dirección completa.
+      navigator.clipboard.writeText(wallet.address);
+      alert("Dirección copiada al portapapeles");
+    }
+  };
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 px-6 backdrop-blur-xl">
       {/* Search */}
@@ -94,7 +104,7 @@ export function Header() {
           )}
         </div>
 
-        {/* Core Wallet Button */}
+        {/* Core Wallet Button - ¡COMPLETAMENTE DINÁMICO AHORA! */}
         <div className="relative">
           {!wallet.connected ? (
             <button
@@ -117,6 +127,7 @@ export function Header() {
                 <span className="absolute -bottom-0 -right-0 h-2 w-2 rounded-full border border-secondary bg-success" />
               </div>
               <div className="flex flex-col items-start">
+                {/* Imprime la dirección real calculada por el context */}
                 <span className="text-xs font-medium text-foreground">{wallet.address}</span>
                 <span className="text-[10px] text-success">Online en Fuji C-Chain</span>
               </div>
@@ -127,12 +138,13 @@ export function Header() {
           {/* Wallet Popover */}
           {walletOpen && wallet.connected && (
             <div className="absolute right-0 top-14 z-50 w-80 overflow-hidden rounded-xl border border-border bg-card shadow-2xl">
-              {/* Balance */}
+              {/* Balance Real */}
               <div className="border-b border-border px-5 py-4">
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   Balance Principal
                 </p>
                 <p className="mt-1 text-2xl font-bold text-card-foreground">
+                  {/* Lee el balance formateado en Ether/AVAX */}
                   {wallet.balanceAVAX}{" "}
                   <span className="text-sm font-medium text-avax-red">AVAX</span>
                 </p>
@@ -177,16 +189,29 @@ export function Header() {
                     </span>
                   </div>
                 ))}
+                {wallet.recentTx.length === 0 && (
+                  <p className="py-2 text-center text-xs text-muted-foreground">
+                    Sin transacciones recientes
+                  </p>
+                )}
               </div>
 
               {/* Actions */}
               <div className="flex items-center gap-2 px-5 py-3">
-                <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-secondary py-2 text-[11px] font-medium text-secondary-foreground transition-colors hover:bg-accent">
+                <button 
+                  onClick={copiarDireccion}
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-secondary py-2 text-[11px] font-medium text-secondary-foreground transition-colors hover:bg-accent"
+                >
                   <Copy className="h-3 w-3" /> Copiar
                 </button>
-                <button className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-secondary py-2 text-[11px] font-medium text-secondary-foreground transition-colors hover:bg-accent">
+                <a 
+                  href={`https://testnet.snowtrace.io/address/${wallet.address}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-secondary py-2 text-[11px] font-medium text-secondary-foreground transition-colors hover:bg-accent text-center"
+                >
                   <ExternalLink className="h-3 w-3" /> Snowtrace
-                </button>
+                </a>
                 <button
                   onClick={() => {
                     disconnectWallet();
