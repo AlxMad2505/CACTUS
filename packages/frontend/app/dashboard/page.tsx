@@ -19,11 +19,28 @@ import {
 import { mockProperties, mockFibras } from "@/lib/mock-data";
 import { useWallet } from "@/lib/wallet-context";
 import { cn } from "@/lib/utils";
+import { runSystemSetup, type SetupProgress } from "@/lib/blockchain-utils";
 
 export default function DashboardPage() {
   const { wallet, connectWallet } = useWallet();
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<"property" | "fibra">("property");
+  const [isSettingUp, setIsSettingUp] = useState(false);
+  const [setupProgress, setSetupProgress] = useState<SetupProgress | null>(null);
+
+  const handleStartSetup = async () => {
+    setIsSettingUp(true);
+    try {
+      await runSystemSetup((progress) => {
+        setSetupProgress(progress);
+      });
+    } catch (error) {
+      console.error("Setup failed:", error);
+    } finally {
+      // Opcionalmente podrías dejarlo abierto para que vean el éxito
+      // setIsSettingUp(false);
+    }
+  };
 
   const userProperties = mockProperties.slice(0, 3);
   const userFibras = mockFibras.slice(0, 2);
@@ -291,9 +308,63 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* Form */}
+              {/* Form or Progress */}
               <div className="px-6 py-6">
-                {modalTab === "property" ? (
+                {isSettingUp ? (
+                  <div className="flex flex-col gap-6">
+                    <div className="flex items-center gap-4 rounded-xl bg-secondary/50 p-4 border border-border">
+                      <div className="flex h-10 w-10 animate-spin items-center justify-center rounded-full border-2 border-avax-red border-t-transparent" />
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">{setupProgress?.message || "Iniciando proceso..."}</p>
+                        <p className="text-xs text-muted-foreground">Paso {setupProgress?.step || 0} de 4</p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Transacciones Generadas</p>
+                      <div className="space-y-2">
+                        {setupProgress?.hashes.map((hash, i) => (
+                          <div key={i} className="flex items-center justify-between rounded-lg bg-secondary px-3 py-2 text-[10px] font-mono border border-border">
+                            <span className="text-muted-foreground">Hash {i + 1}:</span>
+                            <span className="text-avax-red">{hash.slice(0, 20)}...</span>
+                            <a 
+                              href={`https://testnet.snowtrace.io/tx/${hash}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline"
+                            >
+                              Ver en Snowtrace
+                            </a>
+                          </div>
+                        ))}
+                        {setupProgress?.hashes.length === 0 && (
+                          <p className="text-xs text-muted-foreground italic text-center py-2">Esperando firmas del wallet...</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {setupProgress?.addresses && Object.keys(setupProgress.addresses).length > 0 && (
+                      <div className="space-y-4">
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Contratos Desplegados</p>
+                        <div className="space-y-2">
+                          {Object.entries(setupProgress.addresses).map(([name, addr]) => (
+                            <div key={name} className="flex items-center justify-between rounded-lg bg-success/5 px-3 py-2 text-[10px] border border-success/20">
+                              <span className="font-semibold text-success">{name}:</span>
+                              <span className="text-foreground">{addr}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {setupProgress?.step === 5 && (
+                      <div className="rounded-xl bg-success/10 p-4 border border-success/30 text-center">
+                        <p className="text-sm font-bold text-success">¡Configuracion Exitosa!</p>
+                        <p className="text-xs text-success/80 mt-1">El ecosistema de Propiedad Digital esta listo en Fuji L1.</p>
+                      </div>
+                    )}
+                  </div>
+                ) : modalTab === "property" ? (
                   <div className="flex flex-col gap-4">
                     <div>
                       <label className="mb-1.5 block text-xs font-medium text-card-foreground">
@@ -409,16 +480,34 @@ export default function DashboardPage() {
 
               {/* Footer */}
               <div className="flex items-center justify-end gap-3 border-t border-border px-6 py-4">
-                <button
-                  onClick={() => setModalOpen(false)}
-                  className="rounded-lg border border-border bg-secondary px-5 py-2.5 text-xs font-medium text-secondary-foreground transition-colors hover:bg-accent"
-                >
-                  Cancelar
-                </button>
-                <button className="flex items-center gap-2 rounded-lg bg-avax-red px-5 py-2.5 text-xs font-semibold text-primary-foreground transition-all hover:opacity-90">
-                  <Rocket className="h-3.5 w-3.5" />
-                  Desplegar Contrato e Iniciar Transmision ICM
-                </button>
+                {!isSettingUp ? (
+                  <>
+                    <button
+                      onClick={() => setModalOpen(false)}
+                      className="rounded-lg border border-border bg-secondary px-5 py-2.5 text-xs font-medium text-secondary-foreground transition-colors hover:bg-accent"
+                    >
+                      Cancelar
+                    </button>
+                    <button 
+                      onClick={handleStartSetup}
+                      className="flex items-center gap-2 rounded-lg bg-avax-red px-5 py-2.5 text-xs font-semibold text-primary-foreground transition-all hover:opacity-90"
+                    >
+                      <Rocket className="h-3.5 w-3.5" />
+                      Desplegar Contrato e Iniciar Transmision ICM
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setIsSettingUp(false);
+                      setModalOpen(false);
+                    }}
+                    disabled={setupProgress?.step !== 5}
+                    className="rounded-lg border border-border bg-secondary px-5 py-2.5 text-xs font-medium text-secondary-foreground transition-colors hover:bg-accent disabled:opacity-50"
+                  >
+                    Cerrar
+                  </button>
+                )}
               </div>
             </motion.div>
           </motion.div>

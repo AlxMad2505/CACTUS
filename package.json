@@ -15,25 +15,25 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@openzeppelin/contracts": "5.6.1",
-    "hardhat": "^2.22.2",
-    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
     "@nomicfoundation/hardhat-ethers": "^3.0.0",
     "@nomicfoundation/hardhat-ignition-ethers": "^0.15.0",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@nomicfoundation/hardhat-verify": "^2.0.0",
+    "@openzeppelin/contracts": "5.6.1",
     "@typechain/ethers-v6": "^0.5.0",
     "@typechain/hardhat": "^9.0.0",
+    "@types/chai": "^4.3.14",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.12.0",
     "chai": "^4.2.0",
+    "ethers": "^6.16.0",
+    "hardhat": "^2.22.2",
     "hardhat-gas-reporter": "^1.0.8",
     "solidity-coverage": "^0.8.1",
-    "typechain": "^8.3.0",
-    "ethers": "^6.11.0",
-    "typescript": "^5.4.0",
     "ts-node": "^10.9.2",
-    "@types/node": "^20.12.0",
-    "@types/mocha": "^10.0.6",
-    "@types/chai": "^4.3.14"
+    "typechain": "^8.3.0",
+    "typescript": "^5.4.0"
   }
 }
