@@ -16,7 +16,11 @@ contract BitacoraInmueble is ERC721URIStorage, Ownable, IPropertyStructures {
     uint256 private _nextTokenId;
 
     // Mapeos principales basados en nuestro modelo de datos robusto
-    mapping(uint256 => PropertyRecord) public properties;
+    mapping(uint256 => PropertyRecord) private _properties;
+
+    function properties(uint256 propertyId) external view returns (PropertyRecord memory) {
+        return _properties[propertyId];
+    }
     mapping(uint256 => mapping(ServiceType => ServiceDebtStatus)) public propertyDebts;
     mapping(uint256 => HistoryLog[]) private _propertyHistory;
 
@@ -64,7 +68,7 @@ contract BitacoraInmueble is ERC721URIStorage, Ownable, IPropertyStructures {
         _safeMint(to, propertyId);
         _setTokenURI(propertyId, ipfsURI);
 
-        properties[propertyId] = PropertyRecord({
+        _properties[propertyId] = PropertyRecord({
             currentOwner: to,
             constructionDate: uint64(block.timestamp),
             status: PropertyStatus.ACTIVA,
@@ -104,19 +108,19 @@ contract BitacoraInmueble is ERC721URIStorage, Ownable, IPropertyStructures {
             revert NotAuthorized();
         }
         
-        properties[propertyId].isLocked = lockState;
-        properties[propertyId].status = lockState ? PropertyStatus.EN_ESCROW : PropertyStatus.ACTIVA;
+        _properties[propertyId].isLocked = lockState;
+        _properties[propertyId].status = lockState ? PropertyStatus.EN_ESCROW : PropertyStatus.ACTIVA;
         
         // Sincronización Cross-Chain automática vía ICM
         if (propertyPortal != address(0)) {
             try IcmPropertyPortal(propertyPortal).syncPropertyState(
                 propertyId, 
-                properties[propertyId].currentOwner, 
-                properties[propertyId].status
+                _properties[propertyId].currentOwner, 
+                _properties[propertyId].status
             ) {} catch {}
         }
         
-        emit PropertyStatusChanged(propertyId, properties[propertyId].status);
+        emit PropertyStatusChanged(propertyId, _properties[propertyId].status);
     }
 
     /**
@@ -159,7 +163,7 @@ contract BitacoraInmueble is ERC721URIStorage, Ownable, IPropertyStructures {
 
     function registerMaintenanceEvent(uint256 propertyId, string calldata description) external {
         if (_ownerOf(propertyId) != msg.sender) revert NotAuthorized();
-        if (properties[propertyId].isLocked) revert PropertyLocked();
+        if (_properties[propertyId].isLocked) revert PropertyLocked();
 
         _logHistory(propertyId, msg.sender, description);
     }
@@ -187,10 +191,10 @@ contract BitacoraInmueble is ERC721URIStorage, Ownable, IPropertyStructures {
         address previousOwner = super._update(to, tokenId, auth);
         
         if (previousOwner != address(0)) { // Si no es un mint básico
-            if (properties[tokenId].isLocked) revert PropertyLocked();
+            if (_properties[tokenId].isLocked) revert PropertyLocked();
             
             // Actualizar el dueño en nuestro registro optimizado
-            properties[tokenId].currentOwner = to;
+            _properties[tokenId].currentOwner = to;
             
             // Registrar el cambio de manos de forma automática e inmutable
             _logHistory(tokenId, previousOwner, "Transferencia de dominio ejecutada exitosamente.");

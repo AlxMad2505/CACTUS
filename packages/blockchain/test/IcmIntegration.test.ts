@@ -43,9 +43,9 @@ describe("Avalanche ICM - Sincronización Cross-Chain", function () {
   });
 
   it("Debería disparar un mensaje ICM automáticamente al bloquear una propiedad", async function () {
-    // Capturamos el evento MockMessageSent emitido por el Messenger
+    // Capturamos el evento InterchainMessageSent emitido por el Messenger
     await expect(bitacora.setPropertyLock(PROPERTY_ID, true))
-      .to.emit(messenger, "MockMessageSent");
+      .to.emit(messenger, "InterchainMessageSent");
   });
 
   it("Debería permitir al Receptor en Fuji procesar el payload del ICM", async function () {
@@ -69,6 +69,6 @@ describe("Avalanche ICM - Sincronización Cross-Chain", function () {
     await bitacora.setPropertyPortal(ethers.ZeroAddress);
     
     await expect(bitacora.setPropertyLock(PROPERTY_ID, true))
-      .to.not.emit(messenger, "MockMessageSent");
+      .to.not.emit(messenger, "InterchainMessageSent");
   });
 });
