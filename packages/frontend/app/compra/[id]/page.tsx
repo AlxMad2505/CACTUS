@@ -336,7 +336,7 @@ export default function CompraPage({ params }: { params: Promise<{ id: string }>
                     </p>
                     <p className="mt-0.5 text-xs text-muted-foreground">
                       {"~$"}
-                      {property.priceUSD.toLocaleString()} USD
+                      {property.priceUSD.toLocaleString("en-US")} USD
                     </p>
                   </div>
                 </div>
