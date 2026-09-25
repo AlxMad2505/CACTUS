@@ -187,7 +187,7 @@ export default function HomePage() {
                     245 <span className="text-sm text-avax-red">AVAX</span>
                   </p>
                 </div>
-                <p className="text-xs text-muted-foreground">{"~$8,575 USD"}</p>
+                <p className="text-[10px] text-muted-foreground" suppressHydrationWarning>{"~$"}{property.priceUSD.toLocaleString()} USD</p>
               </div>
             </div>
           </motion.div>
