@@ -87,45 +87,45 @@ export default function HomePage() {
   const gas = useCountUp(94);
 
   return (
-    <div className="relative">
+    <div className="relative w-full overflow-hidden">
       {/* Hero */}
-      <section className="relative overflow-hidden px-6 py-20 lg:px-12 lg:py-28">
+      <section className="relative px-4 py-12 sm:px-6 sm:py-16 md:py-20 lg:px-12 lg:py-28">
         {/* Background glow */}
-        <div className="pointer-events-none absolute -right-40 -top-40 h-[500px] w-[500px] rounded-full bg-avax-red/5 blur-3xl" />
-        <div className="pointer-events-none absolute -left-20 bottom-0 h-[300px] w-[300px] rounded-full bg-avax-red/3 blur-3xl" />
+        <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 sm:h-[500px] sm:w-[500px] sm:-right-40 sm:-top-40 rounded-full bg-avax-red/5 blur-3xl" />
+        <div className="pointer-events-none absolute -left-10 bottom-0 h-48 w-48 sm:h-[300px] sm:w-[300px] sm:-left-20 rounded-full bg-avax-red/3 blur-3xl" />
 
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-12 lg:flex-row lg:items-start lg:gap-16">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-10 lg:flex-row lg:items-start lg:gap-16">
           {/* Left copy */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex-1 text-center lg:text-left"
+            className="w-full flex-1 text-center lg:text-left"
           >
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-avax-red/30 bg-avax-red/10 px-4 py-1.5 text-xs font-semibold text-avax-red">
               <Zap className="h-3 w-3" /> Avalanche L1
             </span>
-            <h1 className="mt-4 text-balance text-4xl font-bold leading-tight tracking-tight text-foreground lg:text-5xl xl:text-6xl">
+            <h1 className="mt-4 text-balance text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl md:text-5xl xl:text-6xl">
               El futuro inmobiliario es{" "}
               <span className="text-avax-red">inmutable, fraccional</span> y sin
               intermediarios.
             </h1>
-            <p className="mt-6 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground lg:text-lg">
+            <p className="mt-4 max-w-xl text-pretty text-sm leading-relaxed text-muted-foreground sm:mt-6 sm:text-base lg:text-lg mx-auto lg:mx-0">
               Transforma inmuebles en activos inteligentes sobre Avalanche L1.
               Invierte de forma democratica desde montos minimos con tokens de
               copropiedad y FIBRAs tokenizadas.
             </p>
-            <div className="mt-8 flex flex-wrap items-center gap-4 max-lg:justify-center">
+            <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 lg:justify-start">
               <Link
                 href="/propiedades"
-                className="inline-flex items-center gap-2 rounded-lg bg-avax-red px-6 py-3 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg bg-avax-red px-6 py-3 text-sm font-semibold text-primary-foreground transition-all hover:opacity-90"
               >
                 Explorar Propiedades
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 rounded-lg border border-avax-red/50 bg-transparent px-6 py-3 text-sm font-semibold text-avax-red transition-all hover:bg-avax-red/10"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-lg border border-avax-red/50 bg-transparent px-6 py-3 text-sm font-semibold text-avax-red transition-all hover:bg-avax-red/10"
               >
                 Registrar Activo
               </Link>
@@ -137,9 +137,9 @@ export default function HomePage() {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="w-full max-w-md shrink-0"
+            className="w-full max-w-md shrink-0 px-2 sm:px-0"
           >
-            <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-2xl">
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-2xl">
               <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-avax-red/10 blur-2xl" />
               <div className="mb-4 flex items-center justify-between">
                 <span className="rounded-full bg-avax-red/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-avax-red">
@@ -164,7 +164,7 @@ export default function HomePage() {
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <div className="rounded-lg bg-secondary px-3 py-2">
                   <p className="text-[10px] text-muted-foreground">Clave Catastral</p>
-                  <p className="font-mono text-xs font-medium text-card-foreground">
+                  <p className="truncate font-mono text-xs font-medium text-card-foreground">
                     CAT-09-016-001
                   </p>
                 </div>
@@ -195,7 +195,7 @@ export default function HomePage() {
       </section>
 
       {/* Pillars */}
-      <section className="border-t border-border px-6 py-20 lg:px-12">
+      <section className="border-t border-border px-4 py-16 sm:px-6 sm:py-20 lg:px-12">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial="hidden"
@@ -206,14 +206,14 @@ export default function HomePage() {
             <motion.h2
               variants={fadeUp}
               custom={0}
-              className="text-balance text-3xl font-bold text-foreground"
+              className="text-balance text-2xl sm:text-3xl font-bold text-foreground"
             >
               Pilares del Ecosistema
             </motion.h2>
             <motion.p
               variants={fadeUp}
               custom={1}
-              className="mx-auto mt-3 max-w-2xl text-pretty text-base text-muted-foreground"
+              className="mx-auto mt-3 max-w-2xl text-pretty text-sm sm:text-base text-muted-foreground"
             >
               Cuatro tecnologias convergentes que redefinen la propiedad inmobiliaria en
               Latinoamerica.
@@ -224,14 +224,14 @@ export default function HomePage() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+            className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4"
           >
             {pillars.map((p, i) => (
               <motion.div
                 key={p.title}
                 variants={fadeUp}
                 custom={i + 2}
-                className="group relative overflow-hidden rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:border-avax-red/30 hover:shadow-lg hover:shadow-avax-red/5"
+                className="group relative overflow-hidden rounded-xl border border-border bg-card p-5 sm:p-6 transition-all duration-300 hover:border-avax-red/30 hover:shadow-lg hover:shadow-avax-red/5"
               >
                 <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-avax-red/10 text-avax-red transition-colors group-hover:bg-avax-red group-hover:text-primary-foreground">
                   <p.icon className="h-5 w-5" />
@@ -247,12 +247,12 @@ export default function HomePage() {
       </section>
 
       {/* Stats */}
-      <section className="border-t border-border bg-card/50 px-6 py-20 lg:px-12">
+      <section className="border-t border-border bg-card/50 px-4 py-16 sm:px-6 sm:py-20 lg:px-12">
         <div className="mx-auto max-w-7xl">
-          <h2 className="mb-12 text-center text-3xl font-bold text-foreground">
+          <h2 className="mb-10 sm:mb-12 text-center text-2xl sm:text-3xl font-bold text-foreground">
             Estadisticas de la Red
           </h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 ref: vol.ref,
@@ -286,12 +286,12 @@ export default function HomePage() {
               <div
                 key={stat.label}
                 ref={stat.ref}
-                className="flex flex-col items-center rounded-xl border border-border bg-card p-6 text-center"
+                className="flex flex-col items-center rounded-xl border border-border bg-card p-5 sm:p-6 text-center"
               >
                 <stat.icon className="mb-3 h-6 w-6 text-avax-red" />
-                <p className="text-3xl font-bold text-foreground animate-counter-up">
+                <p className="text-2xl sm:text-3xl font-bold text-foreground animate-counter-up">
                   {stat.value}
-                  <span className="text-lg text-avax-red">{stat.suffix}</span>
+                  <span className="text-base sm:text-lg text-avax-red">{stat.suffix}</span>
                 </p>
                 <p className="mt-2 text-xs text-muted-foreground">{stat.label}</p>
               </div>

@@ -33,11 +33,13 @@ export default function RootLayout({
     <html lang="es" className="bg-background">
       <body className="font-sans antialiased">
         <WalletProvider>
-          <div className="flex h-screen overflow-hidden">
+          <div className="flex h-screen w-full overflow-hidden">
             <Sidebar />
-            <div className="flex flex-1 flex-col overflow-hidden">
+            <div className="flex flex-1 min-w-0 flex-col overflow-hidden">
               <Header />
-              <main className="flex-1 overflow-y-auto">{children}</main>
+              <main className="flex-1 overflow-y-auto overflow-x-hidden">
+                {children}
+              </main>
             </div>
           </div>
         </WalletProvider>

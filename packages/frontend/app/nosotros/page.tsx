@@ -37,6 +37,30 @@ const founders = [
       instagram: "https://www.instagram.com/alex_el_loco25/",
     },
   },
+
+  {
+    name: "Ariel Iván Esparza Lozada",
+    role: "Full-Stack Engineer",
+    bio: "Ingeniero en Computación de la UNAM.",
+    initials: "AIE",
+    image: null,
+    socials: {
+      github: "https://github.com/arielEsparza",
+      instagram: "https://www.instagram.com/ariel_lozada_/",
+    },
+  },
+
+  {
+    name: "Cristian Pacheco Barrios",
+    role: "Full-Stack Engineer",
+    bio: "Ingeniero en Computación de la UNAM.",
+    initials: "CPB",
+    image: null,
+    socials: {
+      instagram: "https://www.instagram.com/crizzzpach/",
+    },
+  },
+  
 ];
 
 export default function NosotrosPage() {
